@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Env & secrets (never commit)
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Optional local exports (large / generated)
+CODE_REVIEW_EXPORT.md

@@ -1,0 +1,13 @@
+{
+  "name": "transcribe-audio-2",
+  "private": true,
+  "workspaces": ["transcribe-mvp"],
+  "scripts": {
+    "dev": "npm run dev -w transcribe-mvp",
+    "build": "npm run build -w transcribe-mvp",
+    "start": "npm run start -w transcribe-mvp",
+    "lint": "npm run lint -w transcribe-mvp",
+    "convex:dev": "npm exec -w transcribe-mvp -- convex dev",
+    "convex:codegen": "npm exec -w transcribe-mvp -- convex codegen"
+  }
+}
