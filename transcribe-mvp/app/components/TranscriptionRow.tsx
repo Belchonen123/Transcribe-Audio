@@ -33,11 +33,15 @@ export function TranscriptionRow({
   onRetry,
   onCopy,
   retryBusy,
+  requestDelete,
+  deleteBusy,
 }: {
   item: RowItem;
   onRetry: (id: Id<"transcriptions">) => void;
   onCopy: (text: string) => void;
   retryBusy?: boolean;
+  requestDelete: (id: Id<"transcriptions">) => void;
+  deleteBusy?: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [copiedTick, setCopiedTick] = useState(false);
@@ -102,7 +106,7 @@ export function TranscriptionRow({
         >
           {item.filename}
         </span>
-        <div className="flex shrink-0 flex-wrap items-center gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-1.5 sm:gap-2">
           <StatusPill status={item.status} />
           <time
             className="text-xs tabular-nums text-zinc-400 dark:text-zinc-500"
@@ -111,6 +115,25 @@ export function TranscriptionRow({
           >
             {formatRelativeTime(item._creationTime)}
           </time>
+          <button
+            type="button"
+            aria-label={`Remove ${item.filename} from history`}
+            title="Remove from history"
+            disabled={deleteBusy}
+            onClick={() => requestDelete(item._id)}
+            className="rounded-md p-1.5 text-zinc-400 transition-all duration-150 hover:bg-red-50 hover:text-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 disabled:pointer-events-none disabled:opacity-40 dark:text-zinc-500 dark:hover:bg-red-950/60 dark:hover:text-red-400 dark:focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-900"
+          >
+            {deleteBusy ? (
+              <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden>
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            ) : (
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
 

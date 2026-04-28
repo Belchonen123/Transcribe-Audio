@@ -47,3 +47,48 @@ export function formatTranscriptForDownload(item: {
   const body = item.transcript ?? "";
   return `# Transcript: ${item.filename}\n\n${body}`;
 }
+
+type ExportRow = {
+  filename: string;
+  status: string;
+  transcript?: string;
+  utterances?: Array<{
+    speaker: string;
+    text: string;
+    start: number;
+    end: number;
+  }>;
+  error?: string;
+};
+
+/** Combined plain-text export for multiple jobs (newest first recommended). */
+export function formatHistoryExport(items: ExportRow[]): string {
+  if (items.length === 0) return "";
+
+  function bodyOnly(item: ExportRow): string {
+    if (Array.isArray(item.utterances) && item.utterances.length > 0) {
+      return item.utterances
+        .map((u) => {
+          const ts = msToHms(u.start);
+          return `[${ts}] Speaker ${u.speaker}: ${u.text}`;
+        })
+        .join("\n\n");
+    }
+    const t = item.transcript?.trim();
+    if (t) return t;
+    return "(No transcript text yet.)";
+  }
+
+  const blocks = items.map((item) => {
+    const err = item.error ? `\n\n— Error —\n${item.error}` : "";
+    return [
+      "══════════════════════════════════════",
+      ` ${item.filename}`,
+      ` Status: ${item.status}`,
+      "──────────────────────────────────────",
+      bodyOnly(item) + err,
+    ].join("\n");
+  });
+
+  return `# Transcribe batch export\n# ${items.length} ${items.length === 1 ? "item" : "items"}\n\n${blocks.join("\n\n")}`;
+}

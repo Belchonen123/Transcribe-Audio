@@ -231,12 +231,34 @@ export const submitToAssembly = internalAction({
 });
 
 export const list = query({
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const cap = Math.min(Math.max(args.limit ?? 50, 1), 100);
+    return await ctx.db.query("transcriptions").order("desc").take(cap);
+  },
+});
+
+export const remove = mutation({
+  args: { id: v.id("transcriptions") },
+  handler: async (ctx, args) => {
+    const record = await ctx.db.get(args.id);
+    if (!record) return;
+    await ctx.storage.delete(record.storageId);
+    await ctx.db.delete(args.id);
+  },
+});
+
+export const clearHistory = mutation({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db
-      .query("transcriptions")
-      .order("desc")
-      .take(20);
+    const rows = await ctx.db.query("transcriptions").collect();
+    for (const row of rows) {
+      await ctx.storage.delete(row.storageId);
+      await ctx.db.delete(row._id);
+    }
+    return rows.length;
   },
 });
 

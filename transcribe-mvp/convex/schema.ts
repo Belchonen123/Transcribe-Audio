@@ -7,6 +7,8 @@ export const utteranceValidator = v.object({
   start: v.number(),
   end: v.number(),
   confidence: v.number(),
+  /** AssemblyAI may include per-word timings on some transcripts */
+  words: v.optional(v.any()),
 });
 
 export default defineSchema({
